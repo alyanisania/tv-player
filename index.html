@@ -100,7 +100,8 @@
 
   <!-- PLAYER MODE: dibuka otomatis kalau ada ?id= di URL -->
   <div id="player">
-    <iframe id="frame" allow="autoplay" allowfullscreen></iframe>
+    <video id="frame" autoplay muted playsinline
+      style="width:100%;height:100%;object-fit:contain;background:#000;"></video>
     <div class="tag" id="tag"></div>
   </div>
 
@@ -219,14 +220,25 @@ const DEFAULT_IDS = ["1w4p6XT3El6A4TBFEVRb6kcRzrzMhwLvS"];
   const tag = document.getElementById('tag');
   let i = 0;
 
-  function show(){
-    frame.src = 'https://drive.google.com/file/d/' + ids[i] + '/preview?autoplay=1';
+  function playCurrent(){
+    frame.src = 'https://drive.usercontent.google.com/download?id=' + ids[i] + '&export=download&confirm=t';
     tag.textContent = (i+1) + ' / ' + ids.length;
-    i = (i + 1) % ids.length;
+    frame.play().catch(()=>{ /* butuh 1x tap kalau browser blokir autoplay */ });
   }
-  show();
+
+  function next(){
+    i = (i + 1) % ids.length;
+    playCurrent();
+  }
+
+  playCurrent();
+
   if(ids.length > 1){
-    setInterval(show, interval);
+    // pindah ke video berikutnya begitu video saat ini selesai (bukan pakai timer tetap)
+    frame.addEventListener('ended', next);
+  } else {
+    // 1 video saja -> ulang terus (loop)
+    frame.loop = true;
   }
 })();
 </script>
