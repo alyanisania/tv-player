@@ -114,7 +114,7 @@
         </p>
       </div>
       <p class="hint">
-        <b>Catatan:</b> alamat ini otomatis muter video default dari GitHub Releases. Kalau mau ganti/generate video lain lewat Google Drive, tempel link-nya di atas dulu.
+        <b>Catatan:</b> alamat ini otomatis muter video default dari Dropbox. Kalau mau ganti/generate video lain lewat Google Drive, tempel link-nya di atas dulu.
       </p>
     </div>
   </div>
@@ -165,7 +165,7 @@ function copyUrl(){
 }
 
 // ===== Boot: cek apakah ini mode player atau setup =====
-const DEFAULT_VIDEO = "https://github.com/alyanisania/tv-player/releases/download/v1/TVC.mp4";
+const DEFAULT_VIDEO = "https://www.dropbox.com/scl/fi/kthdifzgvqmpnnhwsbxty/TVC.mp4?rlkey=om41qhl41ldhqmbd0hxshdghi&st=x089fgxa&dl=1";
 
 (function boot(){
   const params = new URLSearchParams(window.location.search);
@@ -189,17 +189,10 @@ const DEFAULT_VIDEO = "https://github.com/alyanisania/tv-player/releases/downloa
   const tag = document.getElementById('tag');
   tag.textContent = '1 / 1';
 
-  // Link GitHub Releases cuma valid beberapa menit. Tiap video SELESAI,
-  // minta ulang link fresh (bukan reuse link lama yang udah expired).
-  function playFresh(){
-    const bust = (src.indexOf('?') === -1 ? '?' : '&') + '_r=' + Date.now();
-    frame.src = src + bust;
-    frame.load();
-    frame.play().catch(()=>{});
-  }
-
-  frame.addEventListener('ended', playFresh);
-  playFresh();
+  // Link Dropbox (dl=1) nggak expired -> aman pakai native loop.
+  frame.src = src;
+  frame.loop = true;
+  frame.play().catch(()=>{});
 })();
 </script>
 </body>
