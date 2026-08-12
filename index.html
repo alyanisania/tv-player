@@ -21,10 +21,7 @@
     font-family: 'Segoe UI', -apple-system, sans-serif;
     overflow:hidden;
   }
-  #player{
-    position:fixed; inset:0; background:#000;
-    display:none;
-  }
+  #player{ position:fixed; inset:0; background:#000; display:none; }
   #player.active{display:block;}
   #player .tag{
     position:absolute; bottom:14px; right:18px;
@@ -95,7 +92,6 @@
       <p class="eyebrow">Signage Setup</p>
       <h1>TV Video Player</h1>
       <p class="sub">Tempel link Google Drive di sini, lalu generate alamat untuk dibuka di browser masing-masing TV.</p>
-
       <div class="card">
         <h2>Langkah 1 — Link Google Drive</h2>
         <textarea id="links" placeholder="Tempel 1 atau beberapa link, pisahkan per baris:&#10;https://drive.google.com/file/d/xxxxxxx/view?usp=sharing&#10;https://drive.google.com/file/d/yyyyyyy/view?usp=sharing"></textarea>
@@ -106,7 +102,6 @@
         <button onclick="generate()">Generate Alamat TV</button>
         <div class="err" id="err"></div>
       </div>
-
       <div class="card result" id="resultBox">
         <h2>Langkah 2 — Buka di tiap TV</h2>
         <div class="url-box">
@@ -118,9 +113,8 @@
           Semua TV bisa pakai <b>alamat yang sama</b> kalau videonya sama.
         </p>
       </div>
-
       <p class="hint">
-        <b>Penting:</b> di Google Drive, klik kanan file → Share → ubah jadi "Anyone with the link" (Viewer), supaya TV bisa memutarnya tanpa login.
+        <b>Catatan:</b> alamat ini otomatis muter video default dari GitHub Releases. Kalau mau ganti/generate video lain lewat Google Drive, tempel link-nya di atas dulu.
       </p>
     </div>
   </div>
@@ -141,13 +135,11 @@ function generate(){
   const raw = document.getElementById('links').value.split('\n').map(s=>s.trim()).filter(Boolean);
   const errEl = document.getElementById('err');
   errEl.style.display = 'none';
-
   if(raw.length === 0){
     errEl.textContent = 'Tempel minimal 1 link Google Drive dulu.';
     errEl.style.display = 'block';
     return;
   }
-
   const ids = [];
   for(const line of raw){
     const id = extractId(line);
@@ -158,11 +150,9 @@ function generate(){
     }
     ids.push(id);
   }
-
   const interval = document.getElementById('interval').value || 20;
   const base = window.location.origin + window.location.pathname;
   const url = base + '?ids=' + ids.join(',') + '&t=' + interval;
-
   document.getElementById('genUrl').value = url;
   document.getElementById('resultBox').classList.add('show');
 }
@@ -175,7 +165,6 @@ function copyUrl(){
 }
 
 // ===== Boot: cek apakah ini mode player atau setup =====
-// DEFAULT_VIDEO: video yang langsung diputar kalau alamat dibuka polos (tanpa parameter apa-apa).
 const DEFAULT_VIDEO = "https://github.com/alyanisania/tv-player/releases/download/v1/TVC.mp4";
 
 (function boot(){
@@ -189,7 +178,7 @@ const DEFAULT_VIDEO = "https://github.com/alyanisania/tv-player/releases/downloa
   } else if(!wantsSetup && DEFAULT_VIDEO){
     src = DEFAULT_VIDEO;
   } else {
-    return; // tetap di setup mode
+    return;
   }
 
   document.getElementById('setup').style.display = 'none';
@@ -198,11 +187,19 @@ const DEFAULT_VIDEO = "https://github.com/alyanisania/tv-player/releases/downloa
 
   const frame = document.getElementById('frame');
   const tag = document.getElementById('tag');
-
-  frame.src = src;
-  frame.loop = true;
   tag.textContent = '1 / 1';
-  frame.play().catch(()=>{ /* butuh 1x tap kalau browser blokir autoplay */ });
+
+  // Link GitHub Releases cuma valid beberapa menit. Tiap video SELESAI,
+  // minta ulang link fresh (bukan reuse link lama yang udah expired).
+  function playFresh(){
+    const bust = (src.indexOf('?') === -1 ? '?' : '&') + '_r=' + Date.now();
+    frame.src = src + bust;
+    frame.load();
+    frame.play().catch(()=>{});
+  }
+
+  frame.addEventListener('ended', playFresh);
+  playFresh();
 })();
 </script>
 </body>
