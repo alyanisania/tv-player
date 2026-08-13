@@ -114,7 +114,7 @@
         </p>
       </div>
       <p class="hint">
-        <b>Catatan:</b> alamat ini otomatis muter video default dari CDN. Kalau mau ganti/generate video lain lewat Google Drive, tempel link-nya di atas dulu.
+        <b>Catatan:</b> alamat ini otomatis muter video default. Kalau mau ganti/generate video lain lewat Google Drive, tempel link-nya di atas dulu.
       </p>
     </div>
   </div>
@@ -165,10 +165,10 @@ function copyUrl(){
 }
 
 // ===== Boot: cek apakah ini mode player atau setup =====
-// Video di-hosting via GitHub + jsDelivr CDN (bukan Dropbox lagi),
+// Video di-hosting langsung di repo GitHub yang sama (bukan Dropbox/jsDelivr),
 // supaya banyak TV bisa narik file yang sama secara bersamaan
-// tanpa saling rebutan koneksi/bandwidth.
-const DEFAULT_VIDEO = "https://cdn.jsdelivr.net/gh/alyanisania/tv-player@main/TVC_2_Slide_faststart.mp4";
+// tanpa saling rebutan koneksi/bandwidth, dan tanpa limit ukuran file.
+const DEFAULT_VIDEO = "https://alyanisania.github.io/tv-player/TVC_2_Slide_faststart.mp4";
 
 (function boot(){
   const params = new URLSearchParams(window.location.search);
